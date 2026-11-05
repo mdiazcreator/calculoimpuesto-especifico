@@ -56,6 +56,8 @@
     td { padding:6px 7px; text-align:right; border-bottom:1px solid #edf1f2; white-space:nowrap }
     th:first-child,td:first-child { text-align:left; padding-left:17px }
     tbody tr:hover { background:#fbfdfd }
+    tbody tr.out-of-month { background:#fff8e8 }
+    tbody tr.out-of-month:hover { background:#fff3d7 }
     tbody tr:last-child td { border-bottom:0 }
     td.entry input { width:100%; min-width:88px; min-height:34px; padding:5px 7px; text-align:right; border-color:transparent; background:#f1f8fa; border-radius:5px }
     td.entry input:hover { border-color:#cfdee1 }
@@ -130,7 +132,6 @@
         <span id="status" class="status" role="status" aria-live="polite">Las facturas se guardan en este navegador.</span>
       </div>
       <div class="toolbar-actions">
-        <button id="addFive" type="button">+ 5 filas</button>
         <button id="add" class="primary" type="button">+ Agregar factura</button>
         <button id="refreshSii" type="button">↻ Actualizar valores SII</button>
       </div>
@@ -182,32 +183,32 @@
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const storageKey='diesel-impuesto-facturas-v1';
   function readData(){try{return JSON.parse(localStorage.getItem(storageKey)||'[]')}catch{return []}}
-  function getRows(){return [...tbody.querySelectorAll('tr')].map(tr=>{const i=tr.querySelectorAll('input');return {invoice:i[0].value,date:i[1].value,liters:i[2].value,utm:i[3].value,fixed:i[4].value,variable:i[5].value}})}
+  function getRows(){return [...tbody.querySelectorAll('tr')].map(tr=>{const i=tr.querySelectorAll('input');return {id:tr.dataset.id,invoice:i[0].value,date:i[1].value,liters:i[2].value,utm:i[3].value,fixed:i[4].value,variable:i[5].value,month:i[1].value?i[1].value.slice(0,7):monthInput.value}})}
+  function hasData(row){return Boolean(row.invoice||row.date||row.liters||row.utm||row.variable)}
   function newId(){return globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`}
   function saveData(){
-    const current=getRows().map((row,i)=>({...row,month:monthInput.value,id:tbody.rows[i].dataset.id||newId()}));
+    const current=getRows().map((row,i)=>({...row,id:tbody.rows[i].dataset.id||newId()}));
     [...tbody.rows].forEach((tr,i)=>tr.dataset.id=current[i].id);
     const activeIds=new Set(current.map(x=>x.id));
-    const all=readData().filter(x=>!activeIds.has(x.id));
-    try{localStorage.setItem(storageKey,JSON.stringify([...all,...current]));statusEl.textContent='Guardado en este navegador';}catch{statusEl.textContent='No se pudo guardar en este navegador';}
+    const otherMonths=readData().filter(x=>!activeIds.has(x.id));
+    try{
+      localStorage.setItem(storageKey,JSON.stringify([...otherMonths,...current.filter(hasData)]));
+      const outside=tbody.querySelectorAll('tr.out-of-month').length;
+      statusEl.textContent=outside?`${outside} factura(s) con fecha de otro mes; siguen visibles y no se suman al total.`:'Guardado en este navegador';
+    }catch{statusEl.textContent='No se pudo guardar en este navegador';}
   }
   function addRow(data={}){
     const tr=document.createElement('tr');
     tr.dataset.id=data.id||newId();
     tr.innerHTML=`<td class="entry"><input class="invoice" aria-label="Número de factura" type="text" placeholder="Ej. 2284903" value="${esc(data.invoice||'')}"></td><td class="entry"><input class="date" aria-label="Fecha de factura" type="date" value="${esc(data.date||'')}"></td><td class="entry"><input class="liters" aria-label="Cantidad en litros" type="number" min="0" step="any" placeholder="0,00" value="${esc(data.liters??'')}"></td><td class="entry"><input class="utm" aria-label="Valor UTM en pesos" type="number" min="0" step="any" placeholder="0,000" value="${esc(data.utm??'')}"></td><td class="entry"><input class="rate" aria-label="Tasa fija en UTM por metro cúbico" type="number" step="any" value="${esc(data.fixed??'1.5')}"></td><td class="entry"><input class="rate" aria-label="Tasa variable en UTM por metro cúbico" type="number" step="any" placeholder="Según SII" value="${esc(data.variable??'')}"></td><td class="calc fixed incomplete">—</td><td class="calc variable incomplete">—</td><td class="calc total incomplete">—</td><td><button class="remove" type="button" aria-label="Quitar factura" title="Quitar factura">×</button></td>`;
     tr.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{calculate();saveData()}));
-    tr.querySelector('.date').addEventListener('change',e=>{
-      const selectedPeriod=e.target.value?.slice(0,7);
-      if(selectedPeriod&&selectedPeriod!==monthInput.value){
-        saveData();
-        monthInput.value=selectedPeriod;
-        loadMonth();
-      }else{
-        calculate();
-        saveData();
-      }
+    tr.querySelector('.date').addEventListener('change',()=>{calculate();saveData()});
+    tr.querySelector('.remove').addEventListener('click',()=>{
+      const id=tr.dataset.id;
+      tr.remove();
+      try{localStorage.setItem(storageKey,JSON.stringify(readData().filter(row=>row.id!==id)))}catch{}
+      calculate();saveData();
     });
-    tr.querySelector('.remove').addEventListener('click',()=>{tr.remove();calculate();saveData()});
     tbody.appendChild(tr); calculate();
   }
   function findVariableRate(dateValue,data){
@@ -252,17 +253,19 @@
     const selected=monthInput.value;let liters=0,fixedSum=0,varSum=0,totalSum=0,count=0;
     [...tbody.rows].forEach(tr=>{
       const inputs=tr.querySelectorAll('input'),date=inputs[1].value;
-      tr.hidden=Boolean(date&&selected&&date.slice(0,7)!==selected);
-      if(tr.hidden)return;
+      const inSelectedMonth=!date||!selected||date.slice(0,7)===selected;
+      tr.classList.toggle('out-of-month',Boolean(date&&!inSelectedMonth));
       const l=Number(inputs[2].value)||0,utm=Number(inputs[3].value)||0,fixedRate=Number(inputs[4].value)||0,varRate=Number(inputs[5].value)||0;
       const complete=Boolean(date&&l>0&&utm>0&&inputs[5].value!=='');
       const fixed=l/1000*utm*fixedRate,variable=l/1000*utm*varRate,total=fixed+variable;
       const cells=[['.fixed',fixed],['.variable',variable],['.total',total]];
       cells.forEach(([selector,value])=>{const cell=tr.querySelector(selector);cell.textContent=complete?money(value):'—';cell.classList.toggle('incomplete',!complete)});
       const hasContent=inputs[0].value||date||inputs[2].value||inputs[3].value||inputs[5].value;
-      if(hasContent)count++;
-      liters+=l;
-      if(complete){fixedSum+=fixed;varSum+=variable;totalSum+=total;}
+      if(inSelectedMonth){
+        if(hasContent)count++;
+        liters+=l;
+        if(complete){fixedSum+=fixed;varSum+=variable;totalSum+=total;}
+      }
     });
     document.querySelector('#sumLiters').textContent=number(liters);
     document.querySelector('#sumFixed').textContent=money(fixedSum);
@@ -271,24 +274,22 @@
     document.querySelector('#count').textContent=number(count);
     document.querySelector('#litersTotal').textContent=number(liters);
     document.querySelector('#monthTotal').textContent=money(totalSum);
-    document.querySelector('#empty').hidden=count>0;
+    document.querySelector('#empty').hidden=tbody.rows.length>0;
   }
   function loadMonth(){
     tbody.replaceChildren();
     const selected=monthInput.value;
-    const saved=readData().filter(row=>row.date?row.date.slice(0,7)===selected:row.month===selected);
+    const saved=readData().filter(row=>hasData(row)&&(row.date?row.date.slice(0,7)===selected:row.month===selected));
     saved.forEach(addRow);
-    if(saved.length===0)for(let i=0;i<5;i++)addRow();
     calculate();
   }
   document.querySelector('#add').addEventListener('click',()=>{addRow();saveData();tbody.lastElementChild?.querySelector('.invoice').focus()});
-  document.querySelector('#addFive').addEventListener('click',()=>{for(let i=0;i<5;i++)addRow();saveData()});
   document.querySelector('#refreshSii').addEventListener('click',refreshSiiValues);
   monthInput.addEventListener('change',loadMonth);
   document.querySelector('#print').addEventListener('click',()=>window.print());
   document.querySelector('#csv').addEventListener('click',()=>{
     const lines=[['Mes',monthInput.value],[],['N.º factura','Fecha','Cantidad (litros)','UTM ($)','Tasa fija (UTM/m³)','Tasa variable (UTM/m³)','$ Fijo','$ Variable','Valor factura']];
-    [...tbody.rows].filter(tr=>!tr.hidden).forEach(tr=>{const i=tr.querySelectorAll('input');lines.push([i[0].value,i[1].value,i[2].value,i[3].value,i[4].value,i[5].value,tr.querySelector('.fixed').textContent,tr.querySelector('.variable').textContent,tr.querySelector('.total').textContent])});
+    [...tbody.rows].filter(tr=>!tr.classList.contains('out-of-month')).forEach(tr=>{const i=tr.querySelectorAll('input');lines.push([i[0].value,i[1].value,i[2].value,i[3].value,i[4].value,i[5].value,tr.querySelector('.fixed').textContent,tr.querySelector('.variable').textContent,tr.querySelector('.total').textContent])});
     lines.push(['Total del mes','','','','','',document.querySelector('#sumFixed').textContent,document.querySelector('#sumVariable').textContent,document.querySelector('#sumTotal').textContent]);
     const csv='\ufeff'+lines.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\r\n');
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`impuesto_diesel_${monthInput.value||'mes'}.csv`;a.click();URL.revokeObjectURL(a.href);
