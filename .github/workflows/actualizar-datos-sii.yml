@@ -1,0 +1,42 @@
+name: Actualizar valores del SII
+
+on:
+  # Día 2 de cada mes, después del cierre para capturar las tasas semanales
+  # históricas del mes recién terminado.
+  schedule:
+    - cron: "17 13 2 * *"
+  # Permite hacer la primera carga o pedir una actualización anticipada.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar lector de tablas
+        run: python -m pip install requests beautifulsoup4
+
+      - name: Consultar UTM y tasas semanales del SII
+        run: python scripts/actualizar_datos_sii.py --output datos-sii.json
+
+      - name: Guardar datos actualizados en el repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add datos-sii.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Actualizar valores mensuales del SII"
+            git push
+          else
+            echo "Los datos no cambiaron; no se crea un commit."
+          fi

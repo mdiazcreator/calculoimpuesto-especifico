@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "updated_at": null,
+  "fixed_rate": 1.5,
+  "utm_clp": {},
+  "diesel_variable_utm_m3": [],
+  "sources": [
+    "https://www.sii.cl/valores_y_fechas/utm/utm{year}.htm",
+    "https://www.sii.cl/valores_y_fechas/mepco/mepco{year}.htm"
+  ],
+  "coverage_years": []
+}
