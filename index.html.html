@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<!-- saved from url=(0098)file:///C:/Users/mdiaza/Documents/Codex/2026-11-05/ho/outputs/calculadora-diesel-github/index.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c3b">
+  <title>Impuesto específico al diésel | Calculadora mensual</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --navy:#102c3b; --navy-2:#1a4354; --teal:#087e83; --teal-light:#e7f5f3;
+      --ink:#1a2d38; --muted:#667985; --line:#dce6e8; --page:#f4f7f7;
+      --surface:#fff; --yellow:#fff4c7; --yellow-ink:#725317; --red:#a43d3d;
+      --shadow:0 12px 36px rgba(15,45,60,.07);
+    }
+    * { box-sizing:border-box }
+    body { margin:0; background:var(--page); color:var(--ink); font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif }
+    button,input { font:inherit }
+    .topbar { background:var(--navy); color:white; padding:27px 22px 31px }
+    .top-inner,main { width:min(1460px,100%); margin:0 auto }
+    .top-inner { padding:0 10px }
+    .eyebrow { display:flex; align-items:center; gap:8px; margin:0 0 8px; color:#a9d9d3; font-size:.76rem; font-weight:750; letter-spacing:.12em; text-transform:uppercase }
+    .eyebrow:before { content:""; width:8px; height:8px; border-radius:50%; background:#66d2bc }
+    h1 { margin:0; font-size:clamp(1.65rem,3vw,2.35rem); line-height:1.15; letter-spacing:-.035em }
+    .top-subtitle { margin:9px 0 0; color:#d1e0e5; max-width:760px }
+    main { padding:0 22px 42px; margin-top:-14px }
+    .toolbar,.panel,.metric { background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow) }
+    .toolbar { padding:15px 17px; border-radius:12px; display:flex; align-items:end; justify-content:space-between; gap:16px; flex-wrap:wrap }
+    .toolbar-left,.toolbar-actions { display:flex; align-items:end; gap:11px; flex-wrap:wrap }
+    .toolbar .recovery-rate { width:96px }
+    label { display:grid; gap:5px; color:#435964; font-size:.78rem; font-weight:720 }
+    input { min-height:40px; border:1px solid #cbd8dc; border-radius:7px; padding:8px 10px; background:#fff; color:var(--ink); outline:none }
+    input:focus { border-color:var(--teal); box-shadow:0 0 0 3px #087e831b }
+    #month { min-width:160px }
+    button { min-height:40px; border:1px solid #ccd9dc; border-radius:7px; padding:8px 12px; color:var(--ink); background:#fff; font-weight:700; cursor:pointer; transition:background .15s,border-color .15s,transform .15s }
+    button:hover { background:#f1f7f6; border-color:#9eb9bc }
+    button:active { transform:translateY(1px) }
+    button.primary { color:white; background:var(--teal); border-color:var(--teal) }
+    button.primary:hover { background:#066d72 }
+    button.quiet { color:#506873; border-color:transparent }
+    .status { color:var(--muted); font-size:.78rem; white-space:nowrap; padding:0 0 9px 2px }
+    .metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px; margin:15px 0 }
+    .metric { border-radius:11px; padding:15px 17px }
+    .metric-label { display:block; color:var(--muted); font-size:.78rem; font-weight:700 }
+    .metric-value { display:block; margin-top:5px; color:var(--navy); font-size:clamp(1.3rem,2.7vw,1.8rem); font-weight:800; letter-spacing:-.03em; font-variant-numeric:tabular-nums }
+    .metric.total { background:var(--teal-light); border-color:#c7e8e2 }
+    .metric.total .metric-value { color:#08746f }
+    .panel { border-radius:12px; overflow:hidden }
+    .panel-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:18px 19px 14px }
+    h2 { margin:0; color:var(--navy); font-size:1.02rem; letter-spacing:-.01em }
+    .section-caption { margin:4px 0 0; color:var(--muted); font-size:.82rem }
+    .manual-badge { display:inline-flex; align-items:center; gap:7px; color:#805d13; background:#fff7df; border:1px solid #f0dfaa; border-radius:99px; padding:6px 10px; font-size:.72rem; font-weight:750; white-space:nowrap }
+    .manual-badge:before { content:""; width:7px; height:7px; border-radius:50%; background:#d49d20 }
+    .table-scroll { overflow:auto; border-top:1px solid var(--line); border-bottom:1px solid var(--line) }
+    table { width:100%; min-width:1540px; border-collapse:separate; border-spacing:0; font-variant-numeric:tabular-nums }
+    th { position:sticky; top:0; z-index:1; padding:10px 9px; color:#526975; background:#f4f8f8; text-align:right; font-size:.7rem; line-height:1.2; font-weight:780; letter-spacing:.045em; text-transform:uppercase; white-space:nowrap; border-bottom:1px solid var(--line) }
+    td { padding:6px 7px; text-align:right; border-bottom:1px solid #edf1f2; white-space:nowrap }
+    th:first-child,td:first-child { text-align:left; padding-left:17px }
+    tbody tr:hover { background:#fbfdfd }
+    tbody tr.out-of-month { background:#fff8e8 }
+    tbody tr.out-of-month:hover { background:#fff3d7 }
+    tbody tr:last-child td { border-bottom:0 }
+    td.entry input { width:100%; min-width:88px; min-height:34px; padding:5px 7px; text-align:right; border-color:transparent; background:#f1f8fa; border-radius:5px }
+    td.entry input:hover { border-color:#cfdee1 }
+    td.entry input:focus { background:white; border-color:var(--teal) }
+    td.entry .invoice { min-width:106px; text-align:left }
+    td.entry .date { min-width:135px }
+    td.entry .rate { min-width:88px }
+    td.entry .liters { min-width:112px }
+    td.entry .utm { min-width:98px }
+    td.entry .amount { min-width:112px }
+    td.calc { color:#41555e; font-size:.86rem; font-weight:700 }
+    td.calc.total { color:#08746f; font-weight:800 }
+    td.calc.incomplete { color:#9aa8ad; font-weight:500 }
+    .remove { width:32px; min-height:32px; padding:0; color:#829197; border-color:transparent; font-size:1.2rem; line-height:1 }
+    .remove:hover { color:var(--red); background:#fff0f0; border-color:#f2d6d6 }
+    tfoot td { padding:12px 9px; color:var(--navy); background:#f4f8f8; border-top:1px solid var(--line); border-bottom:0; font-weight:800 }
+    tfoot td.total-cell { color:#08746f; font-size:.95rem }
+    tfoot tr.recovery-row td { color:#08746f; background:#eaf6f4; border-top:1px solid #c7e8e2; font-size:.86rem }
+    .empty { padding:34px 20px; text-align:center; color:var(--muted) }
+    .empty strong { display:block; color:var(--navy); margin-bottom:4px }
+    .panel-foot { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; padding:14px 18px 17px }
+    .formula { max-width:800px; color:#576e78; font-size:.78rem }
+    .formula strong { color:#354f5b }
+    .exports { display:flex; gap:8px; flex-shrink:0 }
+    .notice { margin:13px 2px 0; color:#70818a; font-size:.75rem }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0 }
+    @media(max-width:760px) {
+      .topbar { padding:22px 16px 27px } main { padding:0 12px 28px }
+      .top-inner { padding:0 } .toolbar { align-items:stretch; padding:13px }
+      .toolbar-left { width:100% } .toolbar-left label { flex:1 }
+      #month { width:100% } .toolbar-actions { width:100% }
+      .toolbar-actions button { flex:1 }
+      .status { width:100%; padding:0 }
+      .metrics { gap:8px; grid-template-columns:1fr 1fr }
+      .metric { padding:12px } .metric.total { grid-column:1/-1 }
+      .panel-head { padding:15px 13px 12px; flex-wrap:wrap }
+      .table-scroll { overflow-x:auto }
+      th:first-child,td:first-child { padding-left:12px }
+      .panel-foot { flex-direction:column; padding:13px }
+      .exports { width:100% } .exports button { flex:1 }
+    }
+    @media print {
+      body { background:white; font-size:10px }
+      .topbar { color:#111; background:white; padding:0 0 12px }
+      .top-subtitle,.eyebrow,.toolbar-actions,.manual-badge,.remove,.panel-foot,.notice { display:none!important }
+      main { width:100%; margin:0; padding:0 }
+      .toolbar,.metric,.panel { box-shadow:none; border-color:#bbb }
+      .toolbar { padding:8px; margin-bottom:8px }
+      .metrics { margin:8px 0; gap:6px }
+      .metric { padding:7px }
+      .metric-value { font-size:13px }
+      .panel-head { padding:8px }
+      .table-scroll { overflow:visible }
+      table { min-width:0; font-size:8px }
+      th,td { padding:4px; white-space:normal }
+      td.entry input { min-width:0; min-height:0; padding:0; border:0; background:transparent }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-inner">
+      <p class="eyebrow">Control mensual · Chile</p>
+      <h1>Impuesto específico al diésel</h1>
+      <p class="top-subtitle">Calcula el componente fijo y variable de cada factura y revisa el total del período en un solo lugar.</p>
+    </div>
+  </header>
+  <main>
+    <section class="toolbar" aria-label="Período y acciones">
+      <div class="toolbar-left">
+        <label for="month">Mes de trabajo
+          <input id="month" type="month">
+        </label>
+        <label for="recoveryRate">Porcentaje a recuperar
+          <input id="recoveryRate" class="recovery-rate" type="number" min="0" max="100" step="0.1" value="31" inputmode="decimal" aria-describedby="recoveryHelp">
+        </label>
+        <span id="status" class="status" role="status" aria-live="polite">Las facturas se guardan en este navegador.</span>
+      </div>
+      <div class="toolbar-actions">
+        <button id="add" class="primary" type="button">+ Agregar factura</button>
+        <button id="refreshSii" type="button">↻ Actualizar valores SII</button>
+      </div>
+    </section>
+
+    <section class="metrics" aria-label="Resumen del mes">
+      <article class="metric"><span class="metric-label">Facturas registradas</span><strong id="count" class="metric-value">0</strong></article>
+      <article class="metric"><span class="metric-label">Litros del período</span><strong id="litersTotal" class="metric-value">0</strong></article>
+      <article class="metric total"><span class="metric-label">Impuesto total del mes</span><strong id="monthTotal" class="metric-value">$0</strong></article>
+    </section>
+
+    <section class="panel" aria-labelledby="tableTitle">
+      <div class="panel-head">
+        <div>
+          <h2 id="tableTitle">Detalle de facturas</h2>
+          <p class="section-caption">Ingresa una factura por fila. Los montos se calculan automáticamente.</p>
+        </div>
+        <span class="manual-badge">Tasas ingresadas manualmente</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+          <th scope="col">Folio factura</th><th scope="col">Total factura</th><th scope="col">Fecha</th><th scope="col">Litros</th>
+          <th scope="col">UTM</th>
+            <th scope="col">Tasa fija<br>(UTM/m³)</th><th scope="col">Tasa variable<br>(UTM/m³)</th>
+          <th scope="col">$ Fijo</th><th scope="col">$ Variable</th><th scope="col">Valor factura</th><th scope="col"><span class="sr-only">Acciones</span></th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+          <tfoot><tr>
+            <td>Totales</td><td id="sumInvoiceTotal">$0</td><td></td><td id="sumLiters">0</td><td></td><td></td><td></td>
+            <td id="sumFixed">$0</td><td id="sumVariable">$0</td><td id="sumTotal" class="total-cell">$0</td><td></td>
+          </tr><tr class="recovery-row">
+            <td colspan="3">A recuperar (<span id="recoveryRateLabel">31</span>%)</td><td></td><td></td><td></td><td></td>
+            <td id="recoverFixed">$0</td><td id="recoverVariable">$0</td><td id="recoverTotal" class="total-cell">$0</td><td></td>
+          </tr></tfoot>
+        </table>
+        <div id="empty" class="empty"><strong>No hay facturas en este mes</strong>Agrega una factura para comenzar el cálculo.</div>
+      </div>
+      <div class="panel-foot">
+        <div class="formula">Impuesto: litros ÷ 1.000 × UTM × tasa. La fila verde estima cuánto recuperar del componente fijo y variable aplicando el porcentaje indicado; confirma con tu contador qué componentes corresponden a tu régimen tributario.</div>
+        <div class="exports"><button id="xlsx" class="primary" type="button">Descargar Excel de respaldo</button><button id="csv" type="button">Descargar CSV</button><button id="print" type="button">Imprimir</button></div>
+      </div>
+    </section>
+    <p id="recoveryHelp" class="notice">La recuperación estimada se calcula por separado sobre los componentes fijo y variable. Un monto variable negativo también genera un valor de recuperación negativo. El porcentaje se guarda en este navegador.</p>
+  </main>
+
+<script>
+  const tbody=document.querySelector('#rows');
+  const monthInput=document.querySelector('#month');
+  const recoveryInput=document.querySelector('#recoveryRate');
+  const recoveryStorageKey='diesel-impuesto-recovery-rate-v1';
+  const statusEl=document.querySelector('#status');
+  let excelJsLoadPromise=null;
+  const money=n=>new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(Math.round(n||0));
+  const number=n=>new Intl.NumberFormat('es-CL',{maximumFractionDigits:2}).format(n||0);
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const storageKey='diesel-impuesto-facturas-v1';
+  function readData(){try{return JSON.parse(localStorage.getItem(storageKey)||'[]')}catch{return []}}
+  function getRows(){return [...tbody.querySelectorAll('tr')].map(tr=>({id:tr.dataset.id,invoice:tr.querySelector('.invoice').value,invoiceTotal:tr.querySelector('.invoice-total').value,date:tr.querySelector('.date').value,liters:tr.querySelector('.liters').value,utm:tr.querySelector('.utm').value,fixed:tr.querySelectorAll('.rate')[0].value,variable:tr.querySelectorAll('.rate')[1].value,month:tr.querySelector('.date').value?tr.querySelector('.date').value.slice(0,7):monthInput.value}))}
+  function hasData(row){return Boolean(row.invoice||row.invoiceTotal||row.date||row.liters||row.utm||row.variable)}
+  function newId(){return globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`}
+  function saveData(){
+    const current=getRows().map((row,i)=>({...row,id:tbody.rows[i].dataset.id||newId()}));
+    [...tbody.rows].forEach((tr,i)=>tr.dataset.id=current[i].id);
+    const activeIds=new Set(current.map(x=>x.id));
+    const otherMonths=readData().filter(x=>!activeIds.has(x.id));
+    try{
+      localStorage.setItem(storageKey,JSON.stringify([...otherMonths,...current.filter(hasData)]));
+      const outside=tbody.querySelectorAll('tr.out-of-month').length;
+      statusEl.textContent=outside?`${outside} factura(s) con fecha de otro mes; siguen visibles y no se suman al total.`:'Guardado en este navegador';
+    }catch{statusEl.textContent='No se pudo guardar en este navegador';}
+  }
+  function addRow(data={}){
+    const tr=document.createElement('tr');
+    tr.dataset.id=data.id||newId();
+    tr.innerHTML=`<td class="entry"><input class="invoice" aria-label="Folio de factura" type="text" placeholder="Ej. 2284903" value="${esc(data.invoice||'')}"></td><td class="entry"><input class="invoice-total" aria-label="Total del documento de factura en pesos" type="number" min="0" step="any" placeholder="0" value="${esc(data.invoiceTotal??'')}"></td><td class="entry"><input class="date" aria-label="Fecha de factura" type="date" value="${esc(data.date||'')}"></td><td class="entry"><input class="liters" aria-label="Cantidad en litros" type="number" min="0" step="any" placeholder="0,00" value="${esc(data.liters??'')}"></td><td class="entry"><input class="utm" aria-label="Valor UTM en pesos" type="number" min="0" step="any" placeholder="0,000" value="${esc(data.utm??'')}"></td><td class="entry"><input class="rate" aria-label="Tasa fija en UTM por metro cúbico" type="number" step="any" value="${esc(data.fixed??'1.5')}"></td><td class="entry"><input class="rate" aria-label="Tasa variable en UTM por metro cúbico" type="number" step="any" placeholder="Según SII" value="${esc(data.variable??'')}"></td><td class="calc fixed incomplete">—</td><td class="calc variable incomplete">—</td><td class="calc total incomplete">—</td><td><button class="remove" type="button" aria-label="Quitar factura" title="Quitar factura">×</button></td>`;
+    tr.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{if(input.classList.contains('rate'))delete tr.dataset.variableValidFrom;calculate();saveData()}));
+    tr.querySelector('.date').addEventListener('change',()=>{calculate();saveData()});
+    tr.querySelector('.remove').addEventListener('click',()=>{
+      const id=tr.dataset.id;
+      tr.remove();
+      try{localStorage.setItem(storageKey,JSON.stringify(readData().filter(row=>row.id!==id)))}catch{}
+      calculate();saveData();
+    });
+    tbody.appendChild(tr); calculate();
+  }
+  function findVariableRate(dateValue,data){
+    const matches=(data.diesel_variable_utm_m3||[]).filter(row=>row.valid_from<=dateValue).sort((a,b)=>a.valid_from.localeCompare(b.valid_from));
+    return matches.length?matches[matches.length-1]:null;
+  }
+  async function refreshSiiValues(){
+    const button=document.querySelector('#refreshSii');
+    button.disabled=true;button.textContent='Consultando SII…';
+    statusEl.textContent='Buscando UTM y tasa variable para las fechas de tus facturas…';
+    try{
+      const response=await fetch(`./datos-sii.json?actualizar=${Date.now()}`,{cache:'no-store'});
+      if(!response.ok)throw new Error('Todavía no están publicados los datos.');
+      const data=await response.json();
+      let updated=0,missing=[];
+      [...tbody.rows].forEach(tr=>{
+        const invoiceDate=tr.querySelector('.date').value;
+        if(!invoiceDate)return;
+        const utm=data.utm_clp?.[invoiceDate.slice(0,7)],variable=findVariableRate(invoiceDate,data);
+        if(utm!==undefined&&variable){
+          tr.querySelector('.utm').value=utm;tr.querySelectorAll('.rate')[0].value=data.fixed_rate??1.5;tr.querySelectorAll('.rate')[1].value=variable.rate;
+          tr.dataset.variableValidFrom=variable.valid_from;updated++;
+        }else missing.push(invoiceDate);
+      });
+      calculate();saveData();
+      const dateUpdated=data.updated_at?new Date(data.updated_at).toLocaleString('es-CL'):'sin fecha informada';
+      statusEl.textContent=updated?`${updated} factura(s) actualizada(s) · datos SII cargados ${dateUpdated}`:'No hay facturas con fecha para actualizar.';
+      if(missing.length)statusEl.textContent+=` · Sin tasa para ${[...new Set(missing)].join(', ')}`;
+    }catch(error){statusEl.textContent='No se pudieron cargar los datos SII. Ejecuta primero “Actualizar valores del SII” en la pestaña Actions de GitHub.';}
+    finally{button.disabled=false;button.textContent='↻ Actualizar valores SII';}
+  }
+  function calculate(){
+    const selected=monthInput.value;let liters=0,invoiceSum=0,fixedSum=0,varSum=0,totalSum=0,count=0;
+    const recoveryRate=Math.max(0,Math.min(100,Number(recoveryInput.value)||0))/100;
+    [...tbody.rows].forEach(tr=>{
+      const date=tr.querySelector('.date').value;
+      const inSelectedMonth=!date||!selected||date.slice(0,7)===selected;
+      tr.classList.toggle('out-of-month',Boolean(date&&!inSelectedMonth));
+      const invoice=tr.querySelector('.invoice').value,invoiceTotalValue=tr.querySelector('.invoice-total').value;
+      const l=Number(tr.querySelector('.liters').value)||0,utm=Number(tr.querySelector('.utm').value)||0,rates=tr.querySelectorAll('.rate'),fixedRate=Number(rates[0].value)||0,varRate=Number(rates[1].value)||0;
+      const rateComplete=Boolean(date&&l>0&&utm>0&&rates[1].value!=='');
+      const fixed=l/1000*utm*fixedRate,variable=l/1000*utm*varRate,total=fixed+variable;
+      const cells=[['.fixed',fixed,rateComplete],['.variable',variable,rateComplete],['.total',total,rateComplete]];
+      cells.forEach(([selector,value,complete])=>{const cell=tr.querySelector(selector);cell.textContent=complete?money(value):'—';cell.classList.toggle('incomplete',!complete)});
+      const hasContent=invoice||invoiceTotalValue||date||l;
+      if(inSelectedMonth){
+        if(hasContent)count++;
+        liters+=l;invoiceSum+=Number(invoiceTotalValue)||0;
+        if(rateComplete){fixedSum+=fixed;varSum+=variable;totalSum+=total;}
+      }
+    });
+    document.querySelector('#sumLiters').textContent=number(liters);
+    document.querySelector('#sumInvoiceTotal').textContent=money(invoiceSum);
+    document.querySelector('#sumFixed').textContent=money(fixedSum);document.querySelector('#sumVariable').textContent=money(varSum);document.querySelector('#sumTotal').textContent=money(totalSum);
+    document.querySelector('#recoveryRateLabel').textContent=number(recoveryRate*100);
+    document.querySelector('#recoverFixed').textContent=money(fixedSum*recoveryRate);
+    document.querySelector('#recoverVariable').textContent=money(varSum*recoveryRate);
+    document.querySelector('#recoverTotal').textContent=money(totalSum*recoveryRate);
+    document.querySelector('#count').textContent=number(count);document.querySelector('#litersTotal').textContent=number(liters);document.querySelector('#monthTotal').textContent=money(totalSum);
+    document.querySelector('#empty').hidden=tbody.rows.length>0;
+  }
+  function loadMonth(){
+    tbody.replaceChildren();
+    const selected=monthInput.value;
+    const saved=readData().filter(row=>hasData(row)&&(row.date?row.date.slice(0,7)===selected:row.month===selected));
+    saved.forEach(addRow);calculate();
+  }
+  document.querySelector('#add').addEventListener('click',()=>{addRow();tbody.lastElementChild?.querySelector('.invoice').focus()});
+  document.querySelector('#refreshSii').addEventListener('click',refreshSiiValues);
+  try{const savedRecoveryRate=localStorage.getItem(recoveryStorageKey);if(savedRecoveryRate!==null)recoveryInput.value=savedRecoveryRate}catch{}
+  recoveryInput.addEventListener('input',()=>{try{localStorage.setItem(recoveryStorageKey,recoveryInput.value)}catch{}calculate()});
+  monthInput.addEventListener('change',loadMonth);
+  document.querySelector('#print').addEventListener('click',()=>window.print());
+  function loadExcelJS(){
+    if(window.ExcelJS)return Promise.resolve(window.ExcelJS);
+    if(excelJsLoadPromise)return excelJsLoadPromise;
+    excelJsLoadPromise=new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+      script.async=true;script.crossOrigin='anonymous';
+      script.onload=()=>window.ExcelJS?resolve(window.ExcelJS):reject(new Error('No se pudo iniciar ExcelJS.'));
+      script.onerror=()=>reject(new Error('No se pudo descargar el generador Excel.'));
+      document.head.appendChild(script);
+    });
+    return excelJsLoadPromise;
+  }
+  document.querySelector('#xlsx').addEventListener('click',async event=>{
+    const button=event.currentTarget,originalText=button.textContent;
+    button.disabled=true;button.textContent='Preparando Excel…';
+    statusEl.textContent='Preparando el respaldo Excel en este navegador…';
+    try{
+      const ExcelJS=await loadExcelJS();
+      const month=monthInput.value||'mes';
+      const recoveryRate=Math.max(0,Math.min(100,Number(recoveryInput.value)||0))/100;
+      const rows=[...tbody.rows].filter(tr=>{
+        if(tr.classList.contains('out-of-month'))return false;
+        return Boolean(tr.querySelector('.invoice').value||tr.querySelector('.invoice-total').value||tr.querySelector('.date').value||tr.querySelector('.liters').value);
+      }).map(tr=>{
+        const rates=tr.querySelectorAll('.rate');
+        const record={
+          folio:tr.querySelector('.invoice').value,
+          invoiceTotal:tr.querySelector('.invoice-total').value===''?null:Number(tr.querySelector('.invoice-total').value),
+          date:tr.querySelector('.date').value,
+          liters:tr.querySelector('.liters').value===''?null:Number(tr.querySelector('.liters').value),
+          utm:tr.querySelector('.utm').value===''?null:Number(tr.querySelector('.utm').value),
+          fixedRate:rates[0].value===''?null:Number(rates[0].value),
+          variableRate:rates[1].value===''?null:Number(rates[1].value),
+          complete:Boolean(tr.querySelector('.date').value&&(Number(tr.querySelector('.liters').value)||0)>0&&(Number(tr.querySelector('.utm').value)||0)>0&&rates[1].value!=='')
+        };
+        record.fixed=record.complete?record.liters/1000*record.utm*record.fixedRate:null;
+        record.variable=record.complete?record.liters/1000*record.utm*record.variableRate:null;
+        record.tax=record.complete?record.fixed+record.variable:null;
+        record.validFrom=tr.dataset.variableValidFrom||'';
+        return record;
+      });
+
+      const workbook=new ExcelJS.Workbook();
+      workbook.creator='Calculadora de impuesto específico al diésel';
+      workbook.created=new Date();
+      workbook.modified=new Date();
+      const sheet=workbook.addWorksheet(`IE ${month}`,{views:[{state:'frozen',xSplit:1,ySplit:4}]});
+      sheet.properties.defaultRowHeight=22;
+      sheet.getCell('A1').value='Mes';sheet.getCell('B1').value=month;
+      sheet.getCell('A2').value='Porcentaje a recuperar';sheet.getCell('B2').value=recoveryRate;
+      sheet.getCell('B2').numFmt='0%';
+      const headers=['Folio factura','Total factura','Fecha','Litros','UTM','Tasa fija','Tasa variable','$ Fijo','$ Variable','Impuesto específico'];
+      sheet.getRow(4).values=headers;
+      const startRow=5;
+      let invoiceSum=0,literSum=0,fixedSum=0,variableSum=0,taxSum=0;
+      rows.forEach((record,index)=>{
+        const r=startRow+index;
+        const date=record.date?new Date(`${record.date}T12:00:00`):'';
+        sheet.getRow(r).values=[record.folio,record.invoiceTotal,date,record.liters,record.utm,record.fixedRate,record.variableRate,null,null,null];
+        invoiceSum+=record.invoiceTotal;literSum+=record.liters;
+        if(record.complete){
+          sheet.getCell(r,8).value={formula:`D${r}/1000*E${r}*F${r}`,result:record.fixed};
+          sheet.getCell(r,9).value={formula:`D${r}/1000*E${r}*G${r}`,result:record.variable};
+          sheet.getCell(r,10).value={formula:`D${r}/1000*E${r}*(F${r}+G${r})`,result:record.tax};
+          fixedSum+=record.fixed;variableSum+=record.variable;taxSum+=record.tax;
+        }else{
+          sheet.getCell(r,8).value='—';sheet.getCell(r,9).value='—';sheet.getCell(r,10).value='—';
+        }
+      });
+      const totalRow=startRow+rows.length;
+      sheet.getCell(totalRow,1).value='Totales';
+      if(rows.length){
+        const firstData=startRow,lastData=totalRow-1;
+        sheet.getCell(totalRow,2).value={formula:`SUM(B${firstData}:B${lastData})`,result:invoiceSum};
+        sheet.getCell(totalRow,4).value={formula:`SUM(D${firstData}:D${lastData})`,result:literSum};
+        sheet.getCell(totalRow,8).value={formula:`SUM(H${firstData}:H${lastData})`,result:fixedSum};
+        sheet.getCell(totalRow,9).value={formula:`SUM(I${firstData}:I${lastData})`,result:variableSum};
+        sheet.getCell(totalRow,10).value={formula:`SUM(J${firstData}:J${lastData})`,result:taxSum};
+      }else{
+        [2,4,8,9,10].forEach(col=>sheet.getCell(totalRow,col).value=0);
+      }
+      const recoveryRow=totalRow+2;
+      sheet.getCell(recoveryRow,1).value=`A recuperar (${number(recoveryRate*100)}%)`;
+      sheet.getCell(recoveryRow,8).value={formula:`H${totalRow}*$B$2`,result:fixedSum*recoveryRate};
+      sheet.getCell(recoveryRow,9).value={formula:`I${totalRow}*$B$2`,result:variableSum*recoveryRate};
+      sheet.getCell(recoveryRow,10).value={formula:`J${totalRow}*$B$2`,result:taxSum*recoveryRate};
+
+      const navy='FF123247',white='FFFFFFFF',ink='FF18313D',blue='FFDDEBF7',yellow='FFFFF2CC',tealFill='FFDDEFEF',green='FFE4F3F0',gray='FFEDF2F4',red='FFC00000',teal='FF087E83',border='FFCFDDE2';
+      sheet.columns=[{width:18},{width:18},{width:15},{width:12},{width:13},{width:13},{width:19},{width:15},{width:17},{width:22}];
+      for(let r=1;r<=recoveryRow;r++)for(let c=1;c<=10;c++){
+        const cell=sheet.getCell(r,c);cell.font={name:'Arial',size:10,color:ink};cell.alignment={vertical:'middle',horizontal:c===1?'left':'right'};
+      }
+      sheet.getRow(4).height=34;
+      sheet.getRow(4).eachCell(cell=>{cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:navy}};cell.font={name:'Arial',size:10,bold:true,color:white};cell.alignment={horizontal:'center',vertical:'middle',wrapText:true};cell.border={bottom:{style:'medium',color:navy}};});
+      sheet.getCell('A1').font={name:'Arial',size:10,bold:true,color:ink};sheet.getCell('A2').font={name:'Arial',size:10,bold:true,color:ink};
+      sheet.getCell('B1').fill={type:'pattern',pattern:'solid',fgColor:{argb:blue}};
+      sheet.getCell('B2').fill={type:'pattern',pattern:'solid',fgColor:{argb:yellow}};sheet.getCell('B2').font={name:'Arial',size:10,bold:true,color:ink};
+      sheet.getCell('B2').border={top:{style:'thin',color:border},bottom:{style:'thin',color:border},left:{style:'thin',color:border},right:{style:'thin',color:border}};
+      rows.forEach((record,index)=>{
+        const r=startRow+index;sheet.getRow(r).height=24;
+        for(let c=1;c<=7;c++)sheet.getCell(r,c).fill={type:'pattern',pattern:'solid',fgColor:{argb:blue}};
+        sheet.getCell(r,8).fill={type:'pattern',pattern:'solid',fgColor:{argb:yellow}};
+        sheet.getCell(r,9).fill={type:'pattern',pattern:'solid',fgColor:{argb:yellow}};
+        sheet.getCell(r,9).font={name:'Arial',size:10,bold:true,color:red};
+        sheet.getCell(r,10).fill={type:'pattern',pattern:'solid',fgColor:{argb:tealFill}};
+        sheet.getCell(r,10).font={name:'Arial',size:10,bold:true,color:teal};
+        for(let c=8;c<=10;c++)if(!record.complete)sheet.getCell(r,c).font={name:'Arial',size:10,color:'FF8A969B'};
+      });
+      sheet.getRow(totalRow).height=25;
+      sheet.getRow(totalRow).eachCell({includeEmpty:true},cell=>{cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:gray}};cell.font={name:'Arial',size:10,bold:true,color:ink};cell.border={top:{style:'medium',color:border}};});
+      sheet.getCell(totalRow,8).fill={type:'pattern',pattern:'solid',fgColor:{argb:yellow}};
+      sheet.getCell(totalRow,9).fill={type:'pattern',pattern:'solid',fgColor:{argb:yellow}};sheet.getCell(totalRow,9).font={name:'Arial',size:10,bold:true,color:red};
+      sheet.getCell(totalRow,10).fill={type:'pattern',pattern:'solid',fgColor:{argb:tealFill}};sheet.getCell(totalRow,10).font={name:'Arial',size:10,bold:true,color:teal};
+      sheet.getRow(recoveryRow).height=26;
+      sheet.getRow(recoveryRow).eachCell({includeEmpty:true},cell=>{cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:green}};cell.font={name:'Arial',size:10,bold:true,color:teal};cell.border={top:{style:'thin',color:'FFB7DCD5'}};});
+      sheet.getCell(recoveryRow,9).font={name:'Arial',size:10,bold:true,color:red};sheet.getCell(recoveryRow,10).font={name:'Arial',size:10,bold:true,color:red};
+      const currencyFmt='$#,##0;[Red]$-#,##0';
+      for(let r=startRow;r<=totalRow;r++){
+        sheet.getCell(r,2).numFmt=currencyFmt;sheet.getCell(r,3).numFmt='dd-mm-yyyy';sheet.getCell(r,4).numFmt='#,##0';sheet.getCell(r,5).numFmt='#,##0';
+        sheet.getCell(r,6).numFmt='0.0';sheet.getCell(r,7).numFmt='0.0000';
+        for(let c=8;c<=10;c++)sheet.getCell(r,c).numFmt=currencyFmt;
+      }
+      for(let c=8;c<=10;c++)sheet.getCell(recoveryRow,c).numFmt=currencyFmt;
+      const sourceRow=recoveryRow+2,year=month.slice(0,4)||String(new Date().getFullYear());
+      sheet.getCell(sourceRow,1).value='Fuente UTM: Servicio de Impuestos Internos';
+      sheet.getCell(sourceRow,2).value=`https://www.sii.cl/valores_y_fechas/utm/utm${year}.htm`;
+      sheet.getCell(sourceRow+1,1).value='Fuente tasas MEPCO: Servicio de Impuestos Internos';
+      sheet.getCell(sourceRow+1,2).value=`https://www.sii.cl/valores_y_fechas/mepco/mepco${year}.htm`;
+      for(let r=sourceRow;r<=sourceRow+1;r++)for(let c=1;c<=2;c++)sheet.getCell(r,c).font={name:'Arial',size:9,italic:true,color:'FF0563C1'};
+      sheet.views=[{state:'frozen',xSplit:1,ySplit:4}];
+      const buffer=await workbook.xlsx.writeBuffer({useStyles:true});
+      const blob=new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      const link=document.createElement('a'),url=URL.createObjectURL(blob);
+      link.href=url;link.download=`respaldo_impuesto_diesel_${month}.xlsx`;document.body.appendChild(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+      statusEl.textContent='Respaldo Excel descargado con los datos del mes y sus fórmulas.';
+    }catch(error){
+      statusEl.textContent='No se pudo crear el Excel. Revisa tu conexión e inténtalo otra vez; el CSV sigue disponible.';
+    }finally{button.disabled=false;button.textContent=originalText;}
+  });
+  document.querySelector('#csv').addEventListener('click',()=>{
+    const ratePercent=Math.max(0,Math.min(100,Number(recoveryInput.value)||0));
+    const generatedAt=new Date().toISOString();
+    const decimal=value=>value===''||value===null||value===undefined?'':Number(value).toLocaleString('es-CL',{useGrouping:false,maximumFractionDigits:4});
+    const clp=value=>Number.isFinite(value)?String(Math.round(value)):'';
+    const headers=['Tipo de registro','Mes de trabajo','Exportado (UTC)','Folio factura','Total factura (CLP)','Fecha factura','Litros','UTM (CLP)','Tasa fija (UTM/m³)','Tasa variable (UTM/m³)','Tasa resultante (UTM/m³)','Impuesto fijo (CLP)','Impuesto variable (CLP)','Impuesto específico (CLP)','Porcentaje recuperación','Recuperación fijo (CLP)','Recuperación variable (CLP)','Recuperación total (CLP)','Vigencia tasa variable desde','Origen de tasas'];
+    const lines=[headers];
+    let invoiceSum=0,litersSum=0,fixedSum=0,variableSum=0,taxSum=0;
+    [...tbody.rows].filter(tr=>!tr.classList.contains('out-of-month')).forEach(tr=>{
+      const folio=tr.querySelector('.invoice').value;
+      const invoiceTotal=Number(tr.querySelector('.invoice-total').value)||0;
+      const date=tr.querySelector('.date').value;
+      const liters=Number(tr.querySelector('.liters').value)||0;
+      const utm=Number(tr.querySelector('.utm').value)||0;
+      const rates=tr.querySelectorAll('.rate');
+      const fixedRate=Number(rates[0].value)||0,variableRate=Number(rates[1].value)||0;
+      const complete=Boolean(date&&liters>0&&utm>0&&rates[1].value!=='');
+      const fixed=complete?liters/1000*utm*fixedRate:null;
+      const variable=complete?liters/1000*utm*variableRate:null;
+      const tax=complete?fixed+variable:null;
+      const validFrom=tr.dataset.variableValidFrom||'';
+      invoiceSum+=invoiceTotal;litersSum+=liters;
+      if(complete){fixedSum+=fixed;variableSum+=variable;taxSum+=tax;}
+      lines.push(['DETALLE',monthInput.value,generatedAt,folio,clp(invoiceTotal),date,decimal(tr.querySelector('.liters').value),decimal(tr.querySelector('.utm').value),decimal(rates[0].value),decimal(rates[1].value),complete?decimal(fixedRate+variableRate):'',complete?clp(fixed):'',complete?clp(variable):'',complete?clp(tax):'',decimal(ratePercent),complete?clp(fixed*ratePercent/100):'',complete?clp(variable*ratePercent/100):'',complete?clp(tax*ratePercent/100):'',validFrom,validFrom?'SII':'Manual']);
+    });
+    lines.push(['TOTAL_MES',monthInput.value,generatedAt,'',clp(invoiceSum),'',decimal(litersSum),'','','','',clp(fixedSum),clp(variableSum),clp(taxSum),decimal(ratePercent),clp(fixedSum*ratePercent/100),clp(variableSum*ratePercent/100),clp(taxSum*ratePercent/100),'','']);
+    const csv='\ufeff'+lines.map(row=>row.map(value=>'"'+String(value??'').replaceAll('"','""')+'"').join(';')).join('\r\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`impuesto_diesel_${monthInput.value||'mes'}.csv`;a.click();URL.revokeObjectURL(a.href);
+  });
+  const now=new Date();monthInput.value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  loadMonth();
+</script>
+
+
+</body></html>
